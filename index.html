@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Advanced Form Validation</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: white;
+            padding: 25px;
+            width: 320px;
+            border-radius: 12px;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 8px;
+        }
+
+        .error {
+            color: red;
+            font-size: 12px;
+        }
+
+        .success {
+            border: 2px solid green;
+        }
+
+        .fail {
+            border: 2px solid red;
+        }
+
+        .strength {
+            font-size: 12px;
+        }
+
+        button {
+            margin-top: 15px;
+            width: 100%;
+            padding: 10px;
+            background: #667eea;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            background: gray;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Register</h2>
+
+    <input type="text" id="name" placeholder="Name">
+    <div class="error" id="nameError"></div>
+
+    <input type="text" id="email" placeholder="Email">
+    <div class="error" id="emailError"></div>
+
+    <input type="password" id="password" placeholder="Password">
+    <div class="strength" id="strength"></div>
+    <div class="error" id="passwordError"></div>
+
+    <input type="password" id="confirm" placeholder="Confirm Password">
+    <div class="error" id="confirmError"></div>
+
+    <input type="text" id="phone" placeholder="Phone">
+    <div class="error" id="phoneError"></div>
+
+    <button id="submitBtn" disabled>Submit</button>
+</div>
+
+<script>
+let inputs = document.querySelectorAll("input");
+
+inputs.forEach(input => {
+    input.addEventListener("keyup", validateForm);
+});
+
+function setError(id, msg) {
+    document.getElementById(id).innerText = msg;
+}
+
+function setBorder(id, type) {
+    let el = document.getElementById(id);
+    el.classList.remove("success", "fail");
+    el.classList.add(type);
+}
+
+function passwordStrength(pwd) {
+    let strength = "Weak";
+    if (pwd.length > 8 && /[A-Z]/.test(pwd) && /[0-9]/.test(pwd)) {
+        strength = "Strong";
+    } else if (pwd.length >= 6) {
+        strength = "Medium";
+    }
+    document.getElementById("strength").innerText = strength;
+}
+
+function validateForm() {
+
+    let valid = true;
+
+    let name = nameField.value.trim();
+    let email = emailField.value.trim();
+    let password = passwordField.value;
+    let confirm = confirmField.value;
+    let phone = phoneField.value.trim();
+
+    // Name
+    if (name === "") {
+        setError("nameError", "Required");
+        setBorder("name", "fail");
+        valid = false;
+    } else {
+        setError("nameError", "");
+        setBorder("name", "success");
+    }
+
+    // Email
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        setError("emailError", "Invalid");
+        setBorder("email", "fail");
+        valid = false;
+    } else {
+        setError("emailError", "");
+        setBorder("email", "success");
+    }
+
+    // Password
+    passwordStrength(password);
+    if (password.length < 6) {
+        setError("passwordError", "Too short");
+        setBorder("password", "fail");
+        valid = false;
+    } else {
+        setError("passwordError", "");
+        setBorder("password", "success");
+    }
+
+    // Confirm
+    if (password !== confirm) {
+        setError("confirmError", "Not matching");
+        setBorder("confirm", "fail");
+        valid = false;
+    } else {
+        setError("confirmError", "");
+        setBorder("confirm", "success");
+    }
+
+    // Phone
+    if (!/^[0-9]{10}$/.test(phone)) {
+        setError("phoneError", "Invalid");
+        setBorder("phone", "fail");
+        valid = false;
+    } else {
+        setError("phoneError", "");
+        setBorder("phone", "success");
+    }
+
+    document.getElementById("submitBtn").disabled = !valid;
+}
+
+submitBtn.onclick = function() {
+    alert("Form Submitted!");
+}
+</script>
+
+</body>
+</html>
